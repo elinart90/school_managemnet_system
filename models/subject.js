@@ -9,7 +9,7 @@ const subjectSchema = mongoose.Schema(
       },
       level: {
         type: String,
-        enum: ["Primary", "Junior High"], // Subject levels
+        enum: ["Primary", "JHS"], // Subject levels
       },
     },
     { timestamps: true }

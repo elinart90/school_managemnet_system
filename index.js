@@ -10,6 +10,7 @@ const adminRoute = require("./routes/adminRoute")
 const studentRoute = require("./routes/teacherRoute")
 const subjectRoute = require("./routes/subjectRoute")
 const teacherRoute = require('./routes/teacherRoute')
+const parentRoute = require("./routes/parentRoute")
 
 //* Server config
 const app = express()
@@ -26,6 +27,7 @@ app.use("/api/v1/admin",adminRoute )
 app.use('/api/v1/subject', subjectRoute)
 app.use('/api/v1/teacher', teacherRoute)
 app.use('/api/v1/student', studentRoute)
+app.use("/api/v1/parent", parentRoute )
 
 
 

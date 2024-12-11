@@ -6,10 +6,13 @@ const studentSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
     },
     studentCode: {
       type: String,
-      unique: true, // Ensures unique student codes
+      unique: true,
+      unique: true,
+      required: true // Ensures unique student codes
     },
     profilePic: {
       type: mongoose.Schema.Types.ObjectId,
@@ -52,9 +55,29 @@ const studentSchema = mongoose.Schema(
       enum: ["Primary", "Junior High"], // Indicates the level of education
       required: true,
     },
+    admissionDate: {
+      type: Date,
+      default: Date.now,
+    },
+    status: {
+      type: String,
+      enum: ["Active", "Inactive", "Graduated"],
+      default: "Active"
+    }
+
   },
   { timestamps: true }
 );
+
+// Add a pre-save hook to ensure studentCode is generated if not provided
+studentSchema.pre('save', async function(next) {
+  if (!this.studentCode) {
+    // Import the code generation logic
+    const generateStudentCode = require('../utilities/studentCode');
+    this.studentCode = await generateStudentCode(this.class);
+  }
+  next();
+});
 
 const Student = mongoose.model("Student", studentSchema);
 module.exports = Student;
