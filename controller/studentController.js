@@ -1,80 +1,176 @@
-const Student = require('../models/student')
-const File = require('../models/File');
-const Parent = require('../models/Parent');
-const Teacher = require('../models/teacher');
-const generateStudentCode = require('../utils/studentCodeGenerator');
+const Student = require("../models/student")
+const generateCode = require("../utilities/studentCode")
 
+const createStudent = async (req, res, next) => {
+  try {
+    const {
+      name, dateOfBirth, gender, placeOfBirth, nationality,
+      residentialAddress, phoneNumber, parent, emergencyContact,
+      previousSchool, lastGradeCompleted, healthConditions, 
+      assignedClasses, level, status
+    } = req.body;
 
-const createStudent = async(req, res, next) => {
-    try {
-        const { name, studentCode, profilePic, parent, class: studentClass, classTeacher, subjects, level, status } = req.body
+    //* Generate Code
+    const studCode = generateCode(6);  //* This generates a unique 6-digit code
 
-        //* validate ref
-        if(profilePic) {
-            await File.findById(profilePic)
-        }
+    const newStudent = new Student({
+      name, 
+      studentCode: `STU${studCode}`,  //* Use the generated studCode here
+      dateOfBirth, 
+      gender, 
+      placeOfBirth, 
+      nationality,
+      residentialAddress, 
+      phoneNumber, 
+      parent, 
+      emergencyContact, 
+      previousSchool,
+      lastGradeCompleted, 
+      healthConditions, 
+      assignedClasses, 
+      level, 
+      status
+    });
 
-        if(parent && parent.length) {
-            await Promise.all(parent.map(p => Parent.findById(p)))
-        }
+    //* Save student to the database
+    await newStudent.save();
 
-        await Teacher.findById(classTeacher)
-
-        //* Create new Student
-        const newStudent = new Student({
-            name, studentClass, profilePic,
-            class: studentClass, classTeacher,
-            subjects, level, status
-        })
-        await newStudent.save()
-
-        res.status(201).json({
-            message: "Student created successfully",
-            student: newStudent
-        })
-        
-    } catch (error) {
-        next(error)
-    }
+    return res.status(201).json({
+      message: "Student created successfully",
+      student: newStudent
+    });
+    
+  } catch (error) {
+    next(error);
+  }
 }
 
-const getAllStudent = async(req, res, next) => {
-    try {
-        const { page = 1, limit = 10, class: studentClass, level, status, sortBy = "CreatedAt", sortOrder = "desc"} = req.query
 
-        //* Build filter object
-      const filter = {};
-      if (studentClass) filter.class = studentClass;
-      if (level) filter.level = level;
-      if (status) filter.status = status;
+const getAllStudent = async (req, res, next) => {
+  try {
+    const students = await Student.find();  
 
-      //* Populate references
-      const students = await Student.find(filter)
-        .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
-        .limit(Number(limit))
-        .skip((page - 1) * limit)
-        .populate('profilePic')
-        .populate('parent')
-        .populate('classTeacher')
-        .populate('subjects');
-
-        //* GET TOTAL count for pagination
-        const total = await Student.countDocuments(filter)
-
-        res.status(200).json({
-            students, 
-            totalPages: Math.ceil(total /limit),
-            currentPage: Number(page),
-            totalStudents: total
-        })
-
-        
-    } catch (error) {
-        next(error)
+    if (students.length === 0) {  
+      return res.status(404).json({  
+        message: "No students found"
+      });
     }
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "Students fetched successfully",
+      students  // Return students (plural)
+    });
+    
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+const getAstudent = async(req, res, next) => {
+  try {
+    const { id } = req.params
+
+    const student = await Student.findById(id)
+
+    if(!student) {
+      return res.status(401).json({
+        message: "Student not found"
+      })
+    }
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "Student fetech successfully",
+      student
+    })
+    
+  } catch (error) {
+    next
+  }
+}
+
+const updateStudent = async(req, res, next) => {
+  try {
+    const { id } = req.params
+    const {
+      name, dateOfBirth, gender, placeOfBirth, nationality,
+      residentialAddress, phoneNumber, parent, emergencyContact,
+      previousSchool, lastGradeCompleted, healthConditions, 
+      assignedClasses, level, status
+    } = req.body
+
+    const student = await Student.findById(id)
+    if(!student) {
+      return res.status(404).json({
+        code: 404,
+        status: false,
+        message: "Student not found"
+      })
+    }
+
+    if(name) student.name = name
+    if(dateOfBirth) student.dateOfBirth = dateOfBirth
+    if(gender) student.gender = gender
+    if(placeOfBirth) student.placeOfBirth = placeOfBirth
+    if(nationality) student.nationality = nationality
+    if(residentialAddress) student.residentialAddress = residentialAddress
+    if(phoneNumber) student.phoneNumber = phoneNumber
+    if(parent) student.parent = parent
+    if(emergencyContact) student.emergencyContact = emergencyContact
+    if(previousSchool) student.previousSchool = previousSchool
+    if(lastGradeCompleted) student.lastGradeCompleted = lastGradeCompleted
+    if(healthConditions) student.healthConditions = healthConditions
+    if(assignedClasses) student.assignedClasses = assignedClasses
+    if(level) student.level = level
+    if(status) student.status = status
+
+    //* save newUpdate
+    await student.save()
+    res.status(200).json({
+      message: "Student updated successfully",
+      student
+    })
+    
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+const deleteStudent = async(req, res, next) => {
+  try {
+    const { id } = req.params
+
+    const student = await Student.findByIdAndDelete(id)
+    if(!student) {
+      return res.status(404).json({
+        code: 404,
+        status: false,
+        message: "Student not found"
+      })
+    }
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "Student deleted successfully"
+    })
+    
+  } catch (error) {
+    next(error)
+  }
 }
 
 
 module.exports = {
-    createStudent,
+  createStudent,
+  getAllStudent,
+  getAstudent,
+  updateStudent,
+  deleteStudent  
 }

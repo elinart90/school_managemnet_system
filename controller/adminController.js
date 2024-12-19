@@ -41,6 +41,7 @@ const signUp = async(req, res, next) => {
             status: true,
             message: "New Admin registered"
         })
+        res.json({ signUp: []})
     } catch (error) {
         next(error)
     }

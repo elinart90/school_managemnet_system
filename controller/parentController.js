@@ -3,9 +3,9 @@ const Parent = require('../models/parent')
 //*Add a new parent
 const addParent = async(req, res, next) => {
     try {
-        const { name, teleNumber, location, relationship, student} = req.body
+        const { name, teleNumber, location, relationship} = req.body
 
-        const parent = new Parent({ name, teleNumber, location, relationship, student})
+        const parent = new Parent({ name, teleNumber, location, relationship})
         await parent.save()
 
         res.status(201).json({
@@ -21,11 +21,17 @@ const addParent = async(req, res, next) => {
 
 const getAllParent = async(req, res, next) => {
     try {
-        const parent = await Parent.find().populate("student")
+        const parent = await Parent.find()
+
+        if(!parent) {
+            return res.status(401).json({
+                message: "Parent not found"
+            })
+        }
 
         res.status(200).json({
             code: 200,
-            status: true,
+            status: true,  
             message: "Parents fetched successfully",
             parent
         })
@@ -39,7 +45,7 @@ const getAParent = async(req, res, next) => {
     try {
         const { id } = req.params
 
-        const parent = await Parent.findById(id).populate("student")
+        const parent = await Parent.findById(id)
 
         res.status(200).json({
             code: 200,
@@ -57,7 +63,7 @@ const getAParent = async(req, res, next) => {
 const updateParent = async(req, res, next) => {
     try {
         const { id } = req.body
-        const { name, teleNumber, location, relationship, student} = req.body
+        const { name, teleNumber, location, relationship} = req.body
 
         const parent = await Parent.findById(id)
         if(!parent) {
@@ -72,7 +78,6 @@ const updateParent = async(req, res, next) => {
         if(teleNumber) parent.teleNumber = teleNumber
         if(location) parent.location = location
         if(relationship) parent.relationship = relationship
-        if(student) parent.student = student
 
         await parent.save()
         res.status(200).json({

@@ -4,7 +4,19 @@ const Subject = require("../models/subject");
 //* Add a new teacher
 const addTeacher = async (req, res, next) => {
   try {
-    const { name, email, assignedClasses, assignedSubjects } = req.body;
+    const { name, email, phoneNumber, assignedClasses, level, qualification, status, assignedSubjects } = req.body;
+
+    //* check if a tacher is already assigned to this class and level
+    const teacherAlreadyAssigned = await Teacher.findOne({
+      assignedClasses,
+      level
+    })
+
+    if(teacherAlreadyAssigned) {
+      return res.status(400).json({
+        message: `A teacher is aready assigned to ${assignedClasses} at &{level} level`
+      })
+    }
 
     //* Check for duplicate email
     const existingTeacher = await Teacher.findOne({ email });
@@ -34,7 +46,11 @@ const addTeacher = async (req, res, next) => {
     const teacher = new Teacher({
       name,
       email,
+      phoneNumber,
       assignedClasses,
+      level,
+      qualification,
+      status,
       assignedSubjects,
     });
     await teacher.save();
@@ -91,6 +107,35 @@ const getATeacher = async (req, res, next) => {
     next(error);
   }
 };
+
+
+const getTeaacherByClass = async(req, res, next) => {
+  try {
+    const { className, level } = req.body
+
+    if(!className || !level) {
+      return res.status(400).json({
+        message: "Class name and level are required"
+      })
+    }
+
+    const teacher = await Teacher.findOne({
+      assignedClasses: className,
+      level
+    })
+
+    if(!teacher) {
+      return res.status(404).json({
+        message: `No teacher found for ${className} at ${level}`
+      })
+    }
+    
+    res.status(200).json(teacher)
+
+  } catch (error) {
+    next(error)
+  }
+}
 
 const updateTeacher = async (req, res, next) => {
   try {
@@ -151,4 +196,5 @@ module.exports = {
   getATeacher,
   updateTeacher,
   deleteTeacher,
+  getTeaacherByClass
 };

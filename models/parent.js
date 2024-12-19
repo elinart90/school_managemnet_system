@@ -18,10 +18,6 @@ const parentSchema = mongoose.Schema(
         type: String,
         required: true,
       },
-      student: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student", // Link parent to a student
-      },
     },
     { timestamps: true }
   );

@@ -1,30 +1,69 @@
 const mongoose = require("mongoose");
 
-// Define Student Schema
-const studentSchema = mongoose.Schema(
-  {
-    name: {
-      type: String,
+//* define stduent schema
+const studentSchema = mongoose.Schema({
+  name: {
+    type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     studentCode: {
       type: String,
       unique: true,
-      unique: true,
-      required: true // Ensures unique student codes
+      required: true
     },
-    profilePic: {
+    dateOfBirth: {
+      type: Date,
+      required: true
+    },
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      required: true
+    },
+    placeOfBirth: {
+      type: String,
+    },
+    nationality: {
+      type: String,
+    },
+    residentialAddress: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true
+    },
+    parent: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: "File", // File reference for profile pictures
-    },
-    parent: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Parent", // Reference to Parent schema
+      ref: "Parent",
+    }],
+    emergencyContact: {
+      name: {
+        type: String,
+        required: true
       },
-    ],
-    class: {
+      phoneNumber: {
+        type: String,
+      }
+    },
+    previousSchool: {
+      type: String,
+      required: true,
+    },
+    lastGradeCompleted: {
+      type: String,
+      required: true
+    },
+    healthConditions: {
+      type: String
+    },
+    admissionDate: {
+      type: Date,
+      default: Date.now,
+    },
+    assignedClasses: {
       type: String,
       enum: [
         "class 1",
@@ -39,45 +78,18 @@ const studentSchema = mongoose.Schema(
       ],
       required: true,
     },
-    classTeacher: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Teacher", // Reference to Teacher schema
-      required: true,
-    },
-    subjects: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Subject", // Reference to Subject schema
-      },
-    ],
     level: {
       type: String,
-      enum: ["Primary", "Junior High"], // Indicates the level of education
+      enum: ["Primary", "JHS"],
       required: true,
-    },
-    admissionDate: {
-      type: Date,
-      default: Date.now,
     },
     status: {
       type: String,
       enum: ["Active", "Inactive", "Graduated"],
-      default: "Active"
+      default: "Acitve"
     }
+}, { timestamps: true } )
 
-  },
-  { timestamps: true }
-);
+const Student = mongoose.model("Student", studentSchema)
 
-// Add a pre-save hook to ensure studentCode is generated if not provided
-studentSchema.pre('save', async function(next) {
-  if (!this.studentCode) {
-    // Import the code generation logic
-    const generateStudentCode = require('../utilities/studentCode');
-    this.studentCode = await generateStudentCode(this.class);
-  }
-  next();
-});
-
-const Student = mongoose.model("Student", studentSchema);
-module.exports = Student;
+module.exports = Student

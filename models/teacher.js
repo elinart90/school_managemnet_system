@@ -10,6 +10,12 @@ const teacherSchema = mongoose.Schema(
         type: String,
         required: true,
         unique: true,
+        lowercase: true,
+        trim: true
+      },
+      phoneNumber: {
+        type: String,
+        trim: true,
       },
       assignedClasses: [
         {
@@ -25,8 +31,21 @@ const teacherSchema = mongoose.Schema(
             "JHS 2",
             "JHS 3",
           ],
+          required: true,
         },
       ],
+      level: {
+        type: String,
+        enum: ["Primary", "JHS"],
+        required: true,
+      },
+
+      qualification: [String],
+
+      status: {
+        type: String,
+        enum: ["Active", "Inactive"]
+      },
       assignedSubjects: [
         {
           type: mongoose.Schema.Types.ObjectId,
@@ -36,6 +55,11 @@ const teacherSchema = mongoose.Schema(
     },
     { timestamps: true }
   );
+
+  teacherSchema.index(
+    { assignedClasses: 1, level: 1, }, 
+    { unique: true }
+  )
   
   const Teacher = mongoose.model("Teacher", teacherSchema);
   module.exports = Teacher;

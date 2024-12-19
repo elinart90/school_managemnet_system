@@ -1,48 +1,61 @@
-const Student = require('../models/student');
+// const Student = require("../models/student"); // Import the Student model
 
-async function generateStudentCode(studentClass) {
-  // Normalize class name to create a short code prefix
-  const getClassPrefix = (cls) => {
-    // Convert class to lowercase and remove spaces
-    const normalizedClass = cls.toLowerCase().replace(/\s+/g, '');
-    
-    // Map classes to short codes
-    const classPrefixes = {
-      'class1': 'cl1',
-      'class2': 'cl2',
-      'class3': 'cl3',
-      'class4': 'cl4',
-      'class5': 'cl5',
-      'class6': 'cl6',
-      'jhs1': 'jhs1',
-      'jhs2': 'jhs2',
-      'jhs3': 'jhs3'
-    };
+// const generateUniqueCode = async () => {
+//   let codeExists = true; 
+//   let code;
 
-    return classPrefixes[normalizedClass] || 'std';
-  };
+//   while (codeExists) {
+//     // Generate a 6-digit random number
+//     const randomDigits = Math.floor(100000 + Math.random() * 900000); 
+//     code = `STU${randomDigits}`;
 
-  // Get class prefix
-  const prefix = getClassPrefix(studentClass);
+//     // Check if the generated code already exists
+//     const existingStudent = await Student.findOne({ studentCode: code });
+//     if (!existingStudent) {
+//       codeExists = false; // If no conflict, break the loop
+//     }
+//   }
 
-  // Find the maximum existing student code for this class
-  const lastStudent = await Student.findOne({
-    class: studentClass
-  }).sort({ studentCode: -1 }).limit(1);
+//   return code;
+// };
 
-  // Determine the next number
-  let nextNumber = 1;
-  if (lastStudent && lastStudent.studentCode) {
-    // Extract the numeric part and increment
-    const lastNumber = parseInt(lastStudent.studentCode.replace(prefix, ''), 4);
-    nextNumber = isNaN(lastNumber) ? 1 : lastNumber + 1;
+// module.exports = generateUniqueCode;
+
+
+
+// const generateCode = (codeLength) => {
+//   let code = "";
+  
+//   if (!codeLength) {
+//     codeLength = 6; // Default to 6 digits if no length provided
+//   }
+
+//   // Use a secure random number generator (Math.random is not cryptographically secure)
+//   const randomValue = Math.random().toString(36).substr(2, codeLength); // Generates alphanumeric characters
+  
+//   code = randomValue.toUpperCase(); // Make sure the code is uppercase, if needed
+  
+//   return code;
+// };
+
+// module.exports = generateCode;
+
+
+
+const generateCode = (codeLength) => {
+  const number = String(Math.random()).split(".")[1].split("");
+  const length = number.length;
+  let code = ""
+
+  if(!codeLength){
+      codeLength = 6
   }
 
-  // Pad the number to 3 digits
-  const paddedNumber = nextNumber.toString().padStart(3, '0');
-
-  // Combine prefix and padded number
-  return `${prefix}${paddedNumber}`;
+  for (let i = 0; i < codeLength; i++) {
+      code = code + number[length - (i+1)]
+  }
+  return code;
 }
 
-module.exports = generateStudentCode;
+
+module.exports = generateCode  

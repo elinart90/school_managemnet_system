@@ -7,6 +7,8 @@ const { createTeacher, validate} = require('../validator/teacherValidator')
 
 router.post('/', createTeacher, validate, teacherController.addTeacher)
 
+router.get('/byclass', teacherController.getTeaacherByClass)
+
 router.get('/', teacherController.getAllTeacher)
 
 router.get("/:id", teacherController.getATeacher)
