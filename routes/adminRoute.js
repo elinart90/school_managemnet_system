@@ -39,6 +39,37 @@ router.post("/signup", (req, res) => {
     res.json({ message: "List of admins"})
 },signupValidation, validate, adminController.signUp )
 
+
+/**
+ * @swagger
+ * /api/v1/admin/signin:
+ *   post:
+ *     summary: Admin sign in
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The admin's email address
+ *               password:
+ *                 type: string
+ *                 description: The admin's password
+ *     responses:
+ *       200:
+ *         description: Successfully signed in
+ *       401:
+ *         description: Unauthorized, invalid credentials
+ */
+ 
+// Route for an admin to sign in
+// This route will receive the admin's email and password,
+// validate the credentials, and then call the signIn method from the adminController.
+// If successful, a session or JWT will be generated for the admin.
+// If invalid, it will return an error message indicating incorrect credentials.
 router.post("/signin", signinValidation, validate, adminController.signIn)
 
 
