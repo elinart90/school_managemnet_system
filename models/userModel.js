@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const userSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     email: {
         type: String,
@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
         unique: true
     },
     password: {
-        type: Stirng,
+        type: String,
         required: true,
     },
     role: {
@@ -21,10 +21,10 @@ const userSchema = mongoose.Schema({
         default: "student",
         required: true
     },
-    notification: {
-        type: mongoose.Schema.Tyeps.ObjectId,
-        ref: "Notification"
-    },
+    // notification: {
+    //     type: mongoose.Schema.Tyeps.ObjectId,
+    //     ref: "Notification"
+    // },
     verificationCode: {
         type: {
             String

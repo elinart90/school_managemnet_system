@@ -62,7 +62,7 @@ const getAParent = async(req, res, next) => {
 
 const updateParent = async(req, res, next) => {
     try {
-        const { id } = req.body
+        const { id } = req.params
         const { name, teleNumber, location, relationship} = req.body
 
         const parent = await Parent.findById(id)
@@ -95,7 +95,7 @@ const updateParent = async(req, res, next) => {
 
 const deleteParent = async(req, res, next) => {
     try {
-        const { id } = req.body
+        const { id } = req.params
 
         const parent = await Parent.findByIdAndDelete(id)
         if(!parent) {

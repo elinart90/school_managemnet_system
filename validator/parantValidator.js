@@ -19,9 +19,9 @@ const parentValidation = [
     .notEmpty()
     .withMessage("Location is required"),
 
-  check("student")
-    .notEmpty()
-    .withMessage("Student reference is required"),
+  // check("student")
+  //   .notEmpty()
+  //   .withMessage("Student reference is required"),
 ];
 
 module.exports = parentValidation;

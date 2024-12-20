@@ -8,11 +8,11 @@ const swaggerUi = require('swagger-ui-express')
 const errorHandler = require('./middleware/errorHandler')
 const connectMasterDB = require('./config/db')
 const notFound = require('./controller/notFound')
-const adminRoute = require("./routes/adminRoute")
-const studentRoute = require("./routes/studentRoute")
-const subjectRoute = require("./routes/subjectRoute")
-const teacherRoute = require('./routes/teacherRoute')
-const parentRoute = require("./routes/parentRoute")
+const userRoute = require("./routes/userRoute")
+// const studentRoute = require("./routes/studentRoute")
+// const subjectRoute = require("./routes/subjectRoute")
+// const teacherRoute = require('./routes/teacherRoute')
+// const parentRoute = require("./routes/parentRoute")
 const swaggerSpec = require('./utilities/swagger')
 
 //* Server config
@@ -27,11 +27,11 @@ app.use(morgan('dev'))
 app.use(cookieParser())
 
 //* Routes 
-app.use("/api/v1/admin",adminRoute )
-app.use('/api/v1/subject', subjectRoute)
-app.use('/api/v1/teacher', teacherRoute)
-app.use('/api/v1/student', studentRoute)
-app.use("/api/v1/parent", parentRoute )
+app.use("/api/v1/user",userRoute )  
+// app.use('/api/v1/subject', subjectRoute)
+// app.use('/api/v1/teacher', teacherRoute)
+// app.use('/api/v1/student', studentRoute)
+// app.use("/api/v1/parent", parentRoute )
 
 
 //* Not found API request routes

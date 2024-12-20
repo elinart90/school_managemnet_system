@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { signupValidation, signinValidation } = require('../validator/adminValidator')
+const { signupValidation, signinValidation } = require('../validator/userValidator')
 const adminController = require('../controller/adminController')
 const validate = require('../validator/validate')
 
@@ -35,9 +35,7 @@ const validate = require('../validator/validate')
  */
 
 
-router.post("/signup", (req, res) => {
-    res.json({ message: "List of admins"})
-},signupValidation, validate, adminController.signUp )
+router.post("/signup", signupValidation, validate, adminController.signUp)
 
 
 /**
@@ -64,7 +62,7 @@ router.post("/signup", (req, res) => {
  *       401:
  *         description: Unauthorized, invalid credentials
  */
- 
+
 // Route for an admin to sign in
 // This route will receive the admin's email and password,
 // validate the credentials, and then call the signIn method from the adminController.
@@ -72,5 +70,7 @@ router.post("/signup", (req, res) => {
 // If invalid, it will return an error message indicating incorrect credentials.
 router.post("/signin", signinValidation, validate, adminController.signIn)
 
+
+router.put('/',)
 
 module.exports = router
